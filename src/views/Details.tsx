@@ -21,6 +21,12 @@ const Details: React.FC = () => {
     return <Link to="/*">asdasd</Link>;
   }
 
+
+
+
+
+
+  
   return (
     <>
       <NavBar></NavBar>

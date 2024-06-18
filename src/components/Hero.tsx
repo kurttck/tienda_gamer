@@ -2,6 +2,11 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import ProductCard from "./ProductCard";
 import {productos, Producto} from "../assets/data";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+
+
 
 const Hero: React.FC = () => {
 
@@ -43,12 +48,40 @@ const Hero: React.FC = () => {
   };
 
 
+  
+const [products, setProducts] = useState<Producto[]>([]);
+
+useEffect(() => {
+
+   const getdata = async () => {
+    try {
+      const {data} = await axios.get("/games.json");
+      console.log(data);
+      setProducts(data);
+    } catch (error) {
+      console.log(error);
+    }
+
+
+  } 
+
+
+
+  /* axios.get("/games.json")
+     .then((res) => setProducts(res.data))
+     .catch((err) => console.log(err)); */
+  getdata();
+
+
+}, []);
+
+
 
   return (
     <>
       <NavBar />
       <div className="flex flex-col items-center gap-[20px] ">
-        {productos.map((each) => (
+        {products.map((each) => (
           <ProductCard
             key={each.key}
             id={each.id}

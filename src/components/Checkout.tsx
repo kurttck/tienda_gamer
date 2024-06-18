@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Producto, CheckoutProps} from "../assets/data";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
+
 
 
 
@@ -21,7 +25,9 @@ if (!localStorage.getItem("cart")) {
 
 const Checkout: React.FC<CheckoutProps> = ({ product }) => {
 
-  //Estados  
+
+
+  //ESTADOS
   const [quantity, setQuantity] = useState(1);
   const [button, setButton] = useState(false);
 
@@ -30,11 +36,6 @@ const Checkout: React.FC<CheckoutProps> = ({ product }) => {
 
   //GUARDAR DATOS DE COMPRA EN EL LOCAL STORAGE
   const manageCart = () => {
-   /*  let productsOnCart:Producto[] = [];
-
-    if(localStorage.getItem("cart")){
-        productsOnCart = JSON.parse(localStorage.getItem("cart")||'null');
-    } */
 
     const one = productsInStore.find((each)=>each.id === product?.id);
     console.log("Esto es el producto: "+product);
@@ -73,6 +74,43 @@ const Checkout: React.FC<CheckoutProps> = ({ product }) => {
 }, [product.id]);
 
 
+const [game, setGame] = useState<Producto>({
+  key: 0,
+  id: 0,
+  title: "",
+  price: 0,
+  console: [],
+  format: [],
+  img: "",
+  unit: 0,
+});
+
+
+//tomar el id de la parte superior en el link
+const { id } = useParams<{ id: string }>();
+//convertir el dato obtenido a number
+const numericID: number = Number(id);
+
+/* const [onsale, setOnSale] = useState<Producto[]>([]); */
+
+useEffect(() => {
+  axios("/games.json")
+     .then((res) => {
+        const productsg: Array<Producto> = res.data;
+        const detailProduct: Producto | undefined = productsg.find(
+           (each) => each.id === numericID
+        );
+        detailProduct && setGame(detailProduct);
+        /* const filterProducts: Array<Producto> = productsg.filter(
+           (each) => each.unit
+        );
+        filterProducts.length > 0 && setOnSale(filterProducts); */
+     })
+     .catch((err) => console.log(err));
+}, [numericID]);
+
+
+
 
   
 
@@ -81,10 +119,10 @@ const Checkout: React.FC<CheckoutProps> = ({ product }) => {
   return (
     <>
       <div className="informacion">
-        <h2>{product.title}</h2>
-        <p>{product.id}</p>
+        <h2>{game.title}</h2>
+        <p>{game.id}</p>
         <p>Stock</p>
-        <p id="subtotal">$ {(product.price * quantity).toLocaleString()}</p>
+        <p id="subtotal">$ {(game.price * quantity).toLocaleString()}</p>
         {/* ---------------------------------------- */}
         <div>
           <input
